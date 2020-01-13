@@ -47,13 +47,20 @@ repositories {
         // https://github.com/facebook/react-native/blob/0.59-stable/template/android/build.gradle#L30
         // https://github.com/facebook/react-native/blob/0.60-stable/template/android/build.gradle#L28
         url "$projectDir/../node_modules/react-native/android"
+
+        // Along with bumping VLC version below, add this to main repo build.gradle
+        // We need to newer version of VLC and this is where we can find one
+        // url "https://dl.bintray.com/videolan/Android"
     }
     mavenCentral()
 }
 
 dependencies {
     implementation "com.facebook.react:react-native:${safeExtGet('reactnativeVersion', '+')}"
-    implementation 'de.mrmaffen:vlc-android-sdk:1.9.8'
+    // implementation 'de.mrmaffen:vlc-android-sdk:1.9.8'
+    // implementation 'de.mrmaffen:vlc-android-sdk:3.2.6'
+    // implementation 'dl.bintray.videolan:libvlc-all:3.2.3'
+    implementation 'org.videolan.android:libvlc-all:3.2.3'
 }
 
 def configureReactNativePom(def pom) {
