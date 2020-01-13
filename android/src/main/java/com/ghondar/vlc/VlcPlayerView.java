@@ -25,6 +25,8 @@ import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.util.VLCUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import android.util.Log;
 
 public class VlcPlayerView extends FrameLayout implements IVLCVout.Callback, LifecycleEventListener, MediaPlayer.EventListener {
 
@@ -113,28 +115,39 @@ public class VlcPlayerView extends FrameLayout implements IVLCVout.Callback, Lif
         if (mMediaPlayer == null) {
             final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
             // Create LibVLC
-            ArrayList<String> options = new ArrayList<>(50);
+            final ArrayList<String> options = new ArrayList<String>(50);
             int deblocking = getDeblocking(-1);
 
-            int networkCaching = pref.getInt("network_caching_value", 0);
-            if (networkCaching > 60000) networkCaching = 60000;
-            else if (networkCaching < 0) networkCaching = 0;
-            options.add("--audio-time-stretch");
-            options.add("--avcodec-skiploopfilter");
-            options.add("" + deblocking);
-            options.add("--avcodec-skip-frame");
-            options.add("0");
-            options.add("--avcodec-skip-idct");
-            options.add("0");
-            options.add("--subsdec-encoding");
-            options.add("--stats");
-            if (networkCaching > 0) options.add("--network-caching=" + networkCaching);
-            options.add("--androidwindow-chroma");
-            options.add("RV32");
+            // int networkCaching = pref.getInt("network_caching_value", 0);
+            // if (networkCaching > 60000) networkCaching = 60000;
+            // else if (networkCaching < 0) networkCaching = 0;
+            // options.add("--audio-time-stretch");
+            // options.add("--avcodec-skiploopfilter");
+            // options.add("" + deblocking);
+            // options.add("--avcodec-skip-frame");
+            // options.add("0");
+            // options.add("--avcodec-skip-idct");
+            // options.add("0");
+            // options.add("--subsdec-encoding");
+            // options.add("--stats");
+            // if (networkCaching > 0) options.add("--network-caching=" + networkCaching);
+            // options.add(":network-caching=10000");
+            // options.add(":live-caching=10000");
+            // options.add(":file-caching=10000");
+            // options.add(":disc-caching=10000");
+            // options.add(":grayscale");
+            // options.add("--network-caching=10000");
+            // options.add("--live-caching=10000");
+            // options.add("--file-caching=10000");
+            // options.add("--disc-caching=10000");
+            // options.add("--grayscale");
+            // options.add("--aspect-ratio=4:3");
+            // options.add("--androidwindow-chroma");
+            // options.add("RV32");
 
-            options.add("-vv");
-
-            libvlc = new LibVLC(options);
+            // options.add("-vvv");
+            Log.v("ReactNative", Arrays.toString(options.toArray()));
+            libvlc = new LibVLC(getContext(), options);
 
             holder.setKeepScreenOn(true);
 
@@ -156,6 +169,7 @@ public class VlcPlayerView extends FrameLayout implements IVLCVout.Callback, Lif
         }
         Uri uri = Uri.parse(filePath);
         media = new Media(libvlc, uri);
+        media.addOption(":network-caching=0");
         mMediaPlayer.setMedia(media);
         if (autoPlay) {
             mMediaPlayer.play();
@@ -329,7 +343,6 @@ public class VlcPlayerView extends FrameLayout implements IVLCVout.Callback, Lif
         mMediaPlayer.setVolume(volume);
     }
 
-    @Override
     public void onNewLayout(IVLCVout vout, int width, int height, int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
         if (width * height == 0) return;
 
@@ -349,7 +362,6 @@ public class VlcPlayerView extends FrameLayout implements IVLCVout.Callback, Lif
 
     }
 
-    @Override
     public void onHardwareAccelerationError(IVLCVout vout) {
         // Handle errors with hardware acceleration
         this.releasePlayer();
